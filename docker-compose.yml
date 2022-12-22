@@ -1,0 +1,22 @@
+version: "3.5"
+
+services:
+  mysql:
+    platform: linux/amd64
+    image: mysql:5.7.37
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: gobase-backend_local
+      MYSQL_USER: testuser
+      MYSQL_PASSWORD: password
+      TZ: "Asia/Tokyo"
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/01_init.sql
+      - ./seeds:/seeds
+    ports:
+      - 3306:3306
+#      - 13306:3306
+    user: "1000:50"

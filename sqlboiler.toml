@@ -1,0 +1,8 @@
+[mysql]
+  dbname  = "gobase-backend_local"
+  host    = "localhost"
+  port    = 3306
+  user    = "testuser"
+  pass    = "password"
+  sslmode = "false"
+

@@ -1,0 +1,7 @@
+CREATE TABLE `todos` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `text` varchar(200) NOT NULL,
+  `done` tinyint(1) NOT NULL,
+  `user_id` INT UNSIGNED NOT NULL,
+  PRIMARY KEY(`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

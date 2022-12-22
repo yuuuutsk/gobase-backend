@@ -1,0 +1,71 @@
+name: build-and-test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  build_and_test:
+    name: build_and_test
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: yuuuutsk/mysql-utf8:5.7
+        ports:
+          - 23306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: db_test
+          TZ: 'Asia/Tokyo'
+        options: --health-cmd "mysqladmin ping -h localhost" --health-interval 20s --health-timeout 10s --health-retries 10
+    steps:
+      - name: Set up Go 1.18
+        uses: actions/setup-go@v2
+        with:
+          go-version: 1.18
+
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Use Go dependency cache
+        id: use-cache
+        uses: actions/cache@v2
+        with:
+          path: ~/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+      - name: Get Go dependencies
+        if: steps.use-cache.outputs.cache-hit != 'true'
+        run: go get -v -t -d ${{ github.workspace }}/...
+      - name: db migrate
+        run: |
+          mkdir -p ${{ github.workspace }}/tmp
+          # db
+          cat ./dbschema//*.sql > tmp/schema.sql && \
+          docker run -v ${PWD}/tmp:/_tmp --rm \
+          --net=$(docker network ls | grep github_network_ | tr ' ' '\n' | grep github_network_) \
+          --link=mysql:mysql \
+          diverse/mysqldef \
+          -u root \
+          -p root \
+          -h mysql \
+          --file=./_tmp/schema.sql \
+          db_test
+      - name: Check application compile
+        run: |
+          make build
+      - name: test(Unit)
+        run: |
+          go test -p 1 ./...
+        env:
+          DB_NAME: db_test
+          DB_ADDRESS: 127.0.0.1:23306
+          DB_USER: testuser
+          DB_PASSWORD: password
+          DB_NET: tcp
+      - name: Lint(Go vet)
+        run: go vet ./...
