@@ -4,10 +4,9 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/volatiletech/sqlboiler/boil"
-	"github.com/volatiletech/sqlboiler/queries/qm"
-	"github.com/yuuuutsk/gobase-backend/app/domain"
-	"github.com/yuuuutsk/gobase-backend/app/domain/model"
+	"github.com/volatiletech/sqlboiler/v4/boil"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
+	"github.com/yuuuutsk/gobase-backend/app/domain/models"
 	"github.com/yuuuutsk/gobase-backend/app/domain/repository"
 	"github.com/yuuuutsk/gobase-backend/app/infrastracture/dao"
 	"github.com/yuuuutsk/gobase-backend/pkg"
@@ -23,7 +22,7 @@ func NewUserRepository(db *sql.DB, logger logger.Logger) repository.UserReposito
 	return &userRepository{db: db, logger: logger}
 }
 
-func (repo *userRepository) Create(ctx context.Context, users []*model.User, clock pkg.Clock) error {
+func (repo *userRepository) Create(ctx context.Context, users []*models.User, clock pkg.Clock) error {
 	var userDtos dao.UserSlice
 	for _, user := range users {
 		dto := &dao.User{
@@ -40,7 +39,7 @@ func (repo *userRepository) Create(ctx context.Context, users []*model.User, clo
 	return nil
 }
 
-func (repo *userRepository) All(ctx context.Context) ([]*model.User, error) {
+func (repo *userRepository) All(ctx context.Context) ([]*models.User, error) {
 	mods := []qm.QueryMod{
 		//dao.TodoWhere.Done.EQ(false),
 		//dao.TodoWhere.Text.EQ(""),
@@ -54,12 +53,9 @@ func (repo *userRepository) All(ctx context.Context) ([]*model.User, error) {
 		return nil, err
 	}
 
-	result := make([]*model.User, 0, len(dtos))
+	result := make([]*models.User, 0, len(dtos))
 	for i, dto := range dtos {
-		result[i] = model.RestoreUser(
-			domain.UserID(dto.ID),
-			dto.FirstName,
-			dto.LastName)
+		result[i] = dto.ToModel()
 	}
 	return result, nil
 }

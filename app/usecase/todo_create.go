@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/yuuuutsk/gobase-backend/app/domain/model"
+	"github.com/yuuuutsk/gobase-backend/app/domain/models"
 	"github.com/yuuuutsk/gobase-backend/pkg"
 )
 
@@ -14,9 +14,9 @@ type TodoCreateInput struct {
 
 func (uc *TodoUseCase) Create(ctx context.Context, input *TodoCreateInput, clock pkg.Clock) error {
 
-	todo := model.NewTodo(input.Text, input.Done)
+	todo := models.NewTodo(input.Text, input.Done, 1)
 
-	err := uc.repository.Create(ctx, []*model.Todo{todo}, clock)
+	err := uc.repository.Create(ctx, []*models.Todo{todo}, clock)
 	if err != nil {
 		//	todo error handling
 	}

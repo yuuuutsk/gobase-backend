@@ -3,13 +3,12 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"github.com/volatiletech/sqlboiler/v4/boil"
+	"github.com/volatiletech/sqlboiler/v4/queries/qm"
 
-	"github.com/volatiletech/sqlboiler/queries/qm"
-	"github.com/yuuuutsk/gobase-backend/app/domain"
 	"github.com/yuuuutsk/gobase-backend/pkg/logger"
 
-	"github.com/volatiletech/sqlboiler/boil"
-	"github.com/yuuuutsk/gobase-backend/app/domain/model"
+	"github.com/yuuuutsk/gobase-backend/app/domain/models"
 	"github.com/yuuuutsk/gobase-backend/app/domain/repository"
 	"github.com/yuuuutsk/gobase-backend/app/infrastracture/dao"
 	"github.com/yuuuutsk/gobase-backend/pkg"
@@ -24,7 +23,7 @@ func NewTagRepository(db *sql.DB, logger logger.Logger) repository.TodoRepositor
 	return &tagRepository{db: db, logger: logger}
 }
 
-func (repo *tagRepository) Create(ctx context.Context, todos []*model.Todo, clock pkg.Clock) error {
+func (repo *tagRepository) Create(ctx context.Context, todos []*models.Todo, clock pkg.Clock) error {
 	var todoDtos dao.TodoSlice
 	for _, todo := range todos {
 		dto := &dao.Todo{
@@ -41,7 +40,7 @@ func (repo *tagRepository) Create(ctx context.Context, todos []*model.Todo, cloc
 
 	return nil
 }
-func (repo *tagRepository) GetByText(ctx context.Context, text string, clock pkg.Clock) (*model.Todo, error) {
+func (repo *tagRepository) GetByText(ctx context.Context, text string, clock pkg.Clock) (*models.Todo, error) {
 	mods := []qm.QueryMod{
 		dao.TodoWhere.Text.EQ(text),
 	}
@@ -54,16 +53,10 @@ func (repo *tagRepository) GetByText(ctx context.Context, text string, clock pkg
 		return nil, err
 	}
 
-	a := model.RestoreTodo(
-		domain.TodoID(dto.ID),
-		dto.Text,
-		dto.Done,
-	)
-
-	return a, nil
+	return dto.ToModel(), nil
 }
 
-func (repo *tagRepository) All(ctx context.Context) ([]*model.Todo, error) {
+func (repo *tagRepository) All(ctx context.Context) ([]*models.Todo, error) {
 	mods := []qm.QueryMod{
 		//dao.TodoWhere.Done.EQ(false),
 		//dao.TodoWhere.Text.EQ(""),
@@ -77,14 +70,9 @@ func (repo *tagRepository) All(ctx context.Context) ([]*model.Todo, error) {
 		return nil, err
 	}
 
-	result := []*model.Todo{}
+	result := []*models.Todo{}
 	for _, dto := range dtos {
-		a := model.RestoreTodo(
-			domain.TodoID(dto.ID),
-			dto.Text,
-			dto.Done,
-		)
-		result = append(result, a)
+		result = append(result, dto.ToModel())
 	}
 
 	return result, nil

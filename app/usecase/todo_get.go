@@ -3,7 +3,7 @@ package usecase
 import (
 	"context"
 
-	"github.com/yuuuutsk/gobase-backend/app/domain/model"
+	"github.com/yuuuutsk/gobase-backend/app/domain/models"
 	"github.com/yuuuutsk/gobase-backend/pkg"
 )
 
@@ -12,7 +12,7 @@ type TodoGetInput struct {
 }
 
 type TodoGetOutput struct {
-	Todo *model.Todo
+	Todo *models.Todo
 }
 
 func (uc *TodoUseCase) Get(ctx context.Context, input *TodoGetInput, clock pkg.Clock) (*TodoGetOutput, error) {

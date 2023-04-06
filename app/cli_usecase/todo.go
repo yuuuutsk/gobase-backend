@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"github.com/yuuuutsk/gobase-backend/app/domain/model"
+	"github.com/yuuuutsk/gobase-backend/app/domain/models"
 	"github.com/yuuuutsk/gobase-backend/pkg"
 
 	"github.com/yuuuutsk/gobase-backend/app/domain/repository"
@@ -29,7 +29,7 @@ type TodoGetInput struct {
 	ID string
 }
 
-func (uc *TodoUseCase) Get(ctx context.Context, input *TodoGetInput, clock pkg.Clock) (*model.Todo, error) {
+func (uc *TodoUseCase) Get(ctx context.Context, input *TodoGetInput, clock pkg.Clock) (*models.Todo, error) {
 	// TODO: implement
 	return nil, nil
 }

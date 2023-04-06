@@ -18,7 +18,7 @@ wire: ## wire
 
 .PHONY: install-tools
 install-tools: ## install-tools
-	go install github.com/volatiletech/sqlboiler@latest
+	go install github.com/volatiletech/sqlboiler/v4@v4.14.2
 	go install github.com/volatiletech/sqlboiler/v4/drivers/sqlboiler-mysql@latest
 	go install golang.org/x/tools/cmd/goimports@v0.1.3
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint@v1.41.1
@@ -57,8 +57,13 @@ test: ## test
 
 .PHONY: gen
 gen: ## gen
-	sqlboiler mysql -o app/infrastracture/dao -p dao --no-driver-templates --wipe --templates templates/sqlboiler/templates --templates templates/sqlboiler/customized_templates
+	sqlboiler mysql -o app/infrastracture/dao -p dao --no-driver-templates --wipe --templates ${GOPATH}/pkg/mod/github.com/volatiletech/sqlboiler/v4@v4.14.2/templates/main --templates templates/sqlboiler/main
+	sqlboiler mysql -o app/infrastracture/dto -p models --no-driver-templates --wipe --templates templates/sqlboiler/models
+	rm -fr app/models/*.base.go
 	goimports -w app/infrastracture/dao
+	goimports -w app/infrastracture/dto
+	mv app/infrastracture/dto/*.base.go app/domain/models
+	mv -n app/infrastracture/dto/*.go app/domain/models
 
 .PHONY: gqlgen
 gqlgen: ## gqlgen
