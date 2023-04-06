@@ -3,14 +3,6 @@
 
 package models
 
-// Todo is an object representing the database table.
-type Todo struct {
-	ID     uint
-	Text   string
-	Done   bool
-	UserID uint
-}
-
-func RestoreTodo(ID uint, Text string, Done bool, UserID uint) *Todo {
+func NewTodo(ID uint, Text string, Done bool, UserID uint) *Todo {
 	return &Todo{ID: ID, Text: Text, Done: Done, UserID: UserID}
 }

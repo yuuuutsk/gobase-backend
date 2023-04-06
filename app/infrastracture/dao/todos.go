@@ -622,7 +622,7 @@ CacheNoHooks:
 	return o.doAfterInsertHooks(ctx, exec)
 } // dao to model
 func (o *Todo) ToModel() *models.Todo {
-	return &models.Todo{ID: o.ID, Text: o.Text, Done: o.Done, UserID: o.UserID}
+	return models.RestoreTodo(o.ID, o.Text, o.Done, o.UserID)
 }
 
 func NewFromTodo(o *models.Todo) *Todo {

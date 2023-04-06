@@ -560,7 +560,7 @@ CacheNoHooks:
 	return o.doAfterInsertHooks(ctx, exec)
 } // dao to model
 func (o *User) ToModel() *models.User {
-	return &models.User{ID: o.ID, FirstName: o.FirstName, LastName: o.LastName}
+	return models.RestoreUser(o.ID, o.FirstName, o.LastName)
 }
 
 func NewFromUser(o *models.User) *User {

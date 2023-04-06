@@ -3,13 +3,6 @@
 
 package models
 
-// User is an object representing the database table.
-type User struct {
-	ID        uint
-	FirstName string
-	LastName  string
-}
-
-func RestoreUser(ID uint, FirstName string, LastName string) *User {
+func NewUser(ID uint, FirstName string, LastName string) *User {
 	return &User{ID: ID, FirstName: FirstName, LastName: LastName}
 }
